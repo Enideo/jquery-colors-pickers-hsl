@@ -7,14 +7,14 @@ Two color pickers have been developed upon the [jQuery.colors](http://github.com
 
 # Developers Documentation
 * The setGlobals function sets the globals of the anononymous function (which means they remain hidden from the DOM global scope)
-** It is an unorthodox method but simpler than object management whilst maintaining scope.
+  * It is an unorthodox method but simpler than object management whilst maintaining scope.
 * Where possible, styling that is necessary for the picker to render correctly has been applied to the elements, not in the head.
 
 # Future work
 
 ## Better method logic
 For now we have an imitation of the jQuery UI for ease of pickup but these methods seem confusing. Could something better be done?:
-* .insert( $.colors.pickers.hslLite.render() );
+* something.insert( $.colors.pickers.hslLite.render() )
 * Give it an id.
 * $(#id).colorPicker( options... )
 * store settings in data
@@ -25,8 +25,8 @@ For now we have an imitation of the jQuery UI for ease of pickup but these metho
 
 ## More complete versions
 * More for designers i.e.
-** http://www.eyecon.ro/colorpicker/
-** http://www.digitalmagicpro.com/jPicker/
+  * [http://www.eyecon.ro/colorpicker/](http://www.eyecon.ro/colorpicker/)
+  * [http://www.digitalmagicpro.com/jPicker/](http://www.digitalmagicpro.com/jPicker/)
 
 ## Misc
 * Animate the movement of the markers?
