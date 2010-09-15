@@ -14,6 +14,7 @@ Two color pickers have been developed upon the [jQuery.colors](http://github.com
 
 ## Better method logic
 For now we have an imitation of the jQuery UI for ease of pickup but these methods seem confusing. Could something better be done?:
+
 * something.insert( $.colors.pickers.hslLite.render() )
 * Give it an id.
 * $(#id).colorPicker( options... )

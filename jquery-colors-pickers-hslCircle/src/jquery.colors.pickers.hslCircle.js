@@ -1,6 +1,6 @@
 /**
  * jQuery Colors Picker: HSL Circle
- * @license Copyright 2010 Enideo. Released under dual MIT and GPL licenses.
+ * Copyright 2010 Enideo. Released under dual MIT and GPL licenses.
 */
 
 (function($){
