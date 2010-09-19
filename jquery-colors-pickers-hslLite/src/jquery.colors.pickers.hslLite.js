@@ -283,17 +283,6 @@ function applyOptions(options){
 
   }
 
-  if( $.isFunction(onStartChange) ){
-    onStartChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
-  }
-  if( $.isFunction(onChange) ){
-    onChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
-  }
-  if( $.isFunction(onEndChange) ){
-    onEndChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
-  }
-
-
 }
 
   if( $.colors.pickers === undefined ){
