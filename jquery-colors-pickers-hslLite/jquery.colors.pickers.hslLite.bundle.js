@@ -901,7 +901,7 @@ $.fn.hslLiteColorPicker = function(options){
 
   if (typeof options == 'string' && this.data('hslLiteColorPickerId') ){
     if(options==='color'){
-      return $.colors( settings[ this.data('hslLiteColorPickerId') ].hsl , 'array1Circle2Percentage','HSL')
+      return $.colors( settings[ this.data('hslLiteColorPickerId') ].hsl , 'array1Circle2Percentage','HSL');
     }else{
       return settings[ this.data('hslLiteColorPickerId') ][options];
     }
@@ -988,12 +988,18 @@ function applyOptions(options){
     $.colors.pickers = {};
   }
 
-  var scriptSrc = $('script'); /// :last-child fails on chrome?
-  scriptSrc = scriptSrc.eq( scriptSrc.length -1).attr('src').split('/');
-  scriptSrc.pop();
+  var scriptSrc = $('script[src]'); // :last-child fails on chrome?
+  if( scriptSrc.length>0 ){
+    scriptSrc = scriptSrc.eq( scriptSrc.length -1).attr('src').split('/');
+    scriptSrc.pop();
+    scriptSrc = scriptSrc.join('/')+'/'
+  }else{
+    scriptSrc = '';
+  }
+
 
   $.colors.pickers.hslLite = {
-    pathToImages : scriptSrc.join('/')+'/'
+    pathToImages : scriptSrc
   };
 
 

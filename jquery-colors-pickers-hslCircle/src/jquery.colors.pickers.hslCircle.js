@@ -380,13 +380,18 @@ function applyOptions(options){
     $.colors.pickers = {};
   }
 
-  var scriptSrc = $('script'); /// :last-child fails on chrome?
-  scriptSrc = scriptSrc.eq( scriptSrc.length -1).attr('src').split('/');
-  scriptSrc.pop();
+  var scriptSrc = $('script[src]'); // :last-child fails on chrome?
+  if( scriptSrc.length>0 ){
+    scriptSrc = scriptSrc.eq( scriptSrc.length -1).attr('src').split('/');
+    scriptSrc.pop();
+    scriptSrc = scriptSrc.join('/')+'/'
+  }else{
+    scriptSrc = '';
+  }
 
 
   $.colors.pickers.hslCircle = {
-    pathToImages : scriptSrc.join('/')+'/'
+    pathToImages : scriptSrc
   };
 
 
@@ -489,7 +494,7 @@ function initiate(){
     }
 
 
-    styleElement = document.createElement('style'),
+    styleElement = document.createElement('style');
     styleElement.type = 'text/css';
     styleElement.charset = 'utf-8';
     styleElement.rel = 'stylesheet';
