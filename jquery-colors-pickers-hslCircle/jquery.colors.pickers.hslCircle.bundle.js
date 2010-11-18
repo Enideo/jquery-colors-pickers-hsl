@@ -706,7 +706,7 @@ $.extend($.colors.formats,hslFormats);
 
   var ini, settings = {},
     hsl, disabled, onStartChange, onChange, onEndChange,
-    container, wrapper, scales, currentId;
+    container, wrapper, scales, currentId, scriptSrc;
 
 
 function setuphslCircleColorPicker(){
@@ -727,7 +727,7 @@ function setuphslCircleColorPicker(){
       .append( overlayTemplate.clone().addClass('hSprite').css({backgroundPosition:"-160px 0"}) ) );
 
   scaleTemplate.css({overflow:'hidden'});
-  overlayTemplate.css({backgroundRepeat:'repeat-x',width:20,height:100}),
+  overlayTemplate.css({backgroundRepeat:'repeat-x',width:20,height:100});
 
   wrapper.append(  scaleTemplate.clone().addClass('s').data('arrayIndex',1)
     .css({width:20,height:100,position:'absolute',top:30,left:70})
@@ -746,7 +746,7 @@ function setuphslCircleColorPicker(){
 
     var self = $(this);
 
-    if( i==0 ){
+    if( i===0 ){
 
       self.append( handleWrapper.clone().append( handleTemplate.clone().text('+') ).append( handleOutlineTemplate.clone().text('+') ) );
 
@@ -768,7 +768,7 @@ function setuphslCircleColorPicker(){
 
         leftOrRight = 'left';
 
-        if(j%2!=0){
+        if(j%2!==0){
           leftOrRight = 'right';
         }
 
@@ -784,11 +784,10 @@ function setuphslCircleColorPicker(){
 
       self.children('span').css({bottom:2}).children().each(function(j){
 
-        var self = $(this);
+        var self = $(this),
+          topOrBottom = 'top';
 
-        topOrBottom = 'top';
-
-        if(j%2!=0){
+        if(j%2!==0){
           topOrBottom = 'bottom';
         }
 
@@ -813,39 +812,14 @@ function mousedown(event) {
     offset = scale.offset(),
     whichCase = scale.data('arrayIndex');
 
-  if(whichCase==0){
-    offset.top+=80;
-    offset.left+=80;
-  }
-
-  setGlobals( $(this).closest('.hslCircleColorPicker').parent() );
-
-  if(disabled){
-    return true;
-  }
-
-  if( $.isFunction(onStartChange) ){
-    onStartChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
-  }
-
-  if ( !wrapper.data('dragging') ) {
-    $(document).bind('mousemove', mousemove).bind('mouseup', mouseup);
-    wrapper.data('dragging',true);
-  }
-
-  mousemove(event);
-
-  return false;
-
-
   function mousemove(event) {
 
     var factor = 100, value;
 
-    if ( whichCase==0 ) {
+    if ( whichCase===0 ) {
 
       value = Math.atan2( (event.pageX - offset.left), (offset.top-event.pageY) ) / 6.28;
-      if (value < 0) value += 1;
+      if (value < 0) { value += 1; }
       factor = 360;
 
     }else if ( whichCase==1 ) {
@@ -875,26 +849,51 @@ function mousedown(event) {
       onEndChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
     }
 
-    $(document).unbind('mousemove', mousemove).unbind('mouseup', mouseup)
+    $(document).unbind('mousemove', mousemove).unbind('mouseup', mouseup);
     wrapper.data('dragging',false);
   }
+
+
+  if(whichCase===0){
+    offset.top+=80;
+    offset.left+=80;
+  }
+
+  setGlobals( $(this).closest('.hslCircleColorPicker').parent() );
+
+  if(disabled){
+    return true;
+  }
+
+  if( $.isFunction(onStartChange) ){
+    onStartChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
+  }
+
+  if ( !wrapper.data('dragging') ) {
+    $(document).bind('mousemove', mousemove).bind('mouseup', mouseup);
+    wrapper.data('dragging',true);
+  }
+
+  mousemove(event);
+
+  return false;
 
 } /// mousedown
 
 
 function refresh() {
 
-  var opacityValuesArray, opacityValue;
+  var opacityValuesArray, opacityValue,
+    grayValue = (hsl[2])/100;
 
   scales.each(function(){
     var self = $(this),
-      whichCase = self.data('arrayIndex');
+      whichCase = self.data('arrayIndex'),
+      angle = hsl[ whichCase ]/360 * 6.28;
 
     self = self.children('span');
 
-    if( whichCase==0 ){
-
-      var angle = hsl[ whichCase ]/360 * 6.28;
+    if( whichCase===0 ){
 
       self.css({
         top: -Math.cos(angle) * 70 + 80 ,
@@ -915,7 +914,6 @@ function refresh() {
   });
 
 
-  var grayValue = (hsl[2])/100;
   opacityValue = (100-hsl[1])/100;
   opacityValuesArray = [grayValue*opacityValue, (1-grayValue)*opacityValue ];
 
@@ -936,6 +934,9 @@ function refresh() {
   }else{
     opacityValuesArray = [0, 1-opacityValue, opacityValue];
   }
+  /// gray is never 100%: otherwise background hue doesnt come through on IE7
+  opacityValuesArray[1] *= 0.8;
+
 
   scales.filter('.s').css({
     backgroundColor: $.colors( [ hsl[0], 100, 50 ], 'array1Circle2Percentage','HSL').toString('rgb')
@@ -967,7 +968,7 @@ function setGlobals(thisContainer,options){
       onStartChange:onStartChange,
       onChange:onChange,
       onEndChange:onEndChange
-    }
+    };
 
   }else{
 
@@ -991,7 +992,7 @@ $.fn.hslCircleColorPicker = function(options){
 
   if (typeof options == 'string' && this.data('hslCircleColorPickerId') ){
     if(options==='color'){
-      return $.colors( settings[ this.data('hslCircleColorPickerId') ].hsl , 'array1Circle2Percentage','HSL')
+      return $.colors( settings[ this.data('hslCircleColorPickerId') ].hsl , 'array1Circle2Percentage','HSL');
     }else{
       return settings[ this.data('hslCircleColorPickerId') ][options];
     }
@@ -1032,7 +1033,7 @@ $.fn.hslCircleColorPicker = function(options){
 
   }
 
-}
+};
 
 
 function applyOptions(options){
@@ -1079,11 +1080,11 @@ function applyOptions(options){
     $.colors.pickers = {};
   }
 
-  var scriptSrc = $('script[src]'); // :last-child fails on chrome?
+  scriptSrc = $('script[src]'); // :last-child fails on chrome?
   if( scriptSrc.length>0 ){
     scriptSrc = scriptSrc.eq( scriptSrc.length -1).attr('src').split('/');
     scriptSrc.pop();
-    scriptSrc = scriptSrc.join('/')+'/'
+    scriptSrc = scriptSrc.join('/')+'/';
   }else{
     scriptSrc = '';
   }
@@ -1097,19 +1098,6 @@ function applyOptions(options){
 
 function initiate(){
 
-  /// confirm initiation
-  ini = true;
-
-
-  /// IE wont allow dynamic data uris so detection wont work (and no error called)
-  /// http://msdn.microsoft.com/en-us/library/cc848897%28VS.85%29.aspx
-  if( /MSIE/.test(navigator.appVersion) ){
-    injectStyle(true);
-  }else{
-    $('<img/>').attr('src','data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==')
-      .one('error load',injectStyle)
-      .appendTo('body');
-  }
 
   function injectStyle(e){
 
@@ -1154,7 +1142,7 @@ function initiate(){
       thisStyle,
       beforeThis = document.getElementsByTagName('link');
 
-    if(beforeThis.length==0){
+    if(beforeThis.length===0){
       beforeThis = document.getElementsByTagName('style');
     }
 
@@ -1183,7 +1171,7 @@ function initiate(){
 
       styleElement.href = $.colors.pickers.hslCircle.pathToImages+'jquery.colors.pickers.hslCircle.css';
 
-      if(beforeThis.length!=0){
+      if(beforeThis.length!==0){
         document.getElementsByTagName('head')[0].insertBefore( styleElement, beforeThis[0] );
       }else{
         document.getElementsByTagName('head')[0].appendChild( styleElement);
@@ -1214,7 +1202,7 @@ function initiate(){
     style = style.join('');
 
 
-    if(beforeThis.length!=0){
+    if(beforeThis.length!==0){
       document.getElementsByTagName('head')[0].insertBefore( styleElement, beforeThis[0] );
     }else{
       document.getElementsByTagName('head')[0].appendChild( styleElement);
@@ -1233,6 +1221,20 @@ function initiate(){
 
   }
 
+
+  /// confirm initiation
+  ini = true;
+
+
+  /// IE wont allow dynamic data uris so detection wont work (and no error called)
+  /// http://msdn.microsoft.com/en-us/library/cc848897%28VS.85%29.aspx
+  if( /MSIE/.test(navigator.appVersion) ){
+    injectStyle(true);
+  }else{
+    $('<img/>').attr('src','data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==')
+      .one('error load',injectStyle)
+      .appendTo('body');
+  }
 }
 
 

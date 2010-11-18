@@ -7,7 +7,7 @@
 
   var ini, settings = {},
     hsl, disabled, onStartChange, onChange, onEndChange,
-    container, wrapper, scales, currentId;
+    container, wrapper, scales, currentId, scriptSrc;
 
 
 function setuphslLiteColorPicker(){
@@ -44,7 +44,7 @@ function setuphslLiteColorPicker(){
       var self = $(this),
         topOrBottom = 'top';
 
-      if(i%2!=0){
+      if(i%2!==0){
         topOrBottom = 'bottom';
       }
 
@@ -63,9 +63,38 @@ function setuphslLiteColorPicker(){
 
 
 function mousedown(event) {
+
   var scale = $(event.currentTarget),
     xOffset = scale.offset().left,
     whichCase = scale.data('arrayIndex');
+
+  function mousemove(event) {
+
+    var factor = 100, value = (event.pageX - xOffset)/200;
+    value = value > 1 ? 1 : value < 0 ? 0 : value;
+
+
+    if ( whichCase===0 ) { factor = 360; }
+    hsl[whichCase] = value*factor;
+
+    refresh();
+
+    if( $.isFunction(onChange) ){
+      onChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
+    }
+
+    return false;
+  }
+
+  function mouseup(event){
+
+    if( $.isFunction(onEndChange) ){
+      onEndChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
+    }
+
+    $(document).unbind('mousemove', mousemove).unbind('mouseup', mouseup);
+    wrapper.data('dragging',false);
+  }
 
   setGlobals( $(this).closest('.hslLiteColorPicker').parent() );
 
@@ -86,35 +115,6 @@ function mousedown(event) {
 
   return false;
 
-
-  function mousemove(event) {
-
-    var factor = 100, value = (event.pageX - xOffset)/200;
-    value = value > 1 ? 1 : value < 0 ? 0 : value;
-
-
-    if ( whichCase==0 ) factor = 360;
-    hsl[whichCase] = value*factor;
-
-    refresh();
-
-    if( $.isFunction(onChange) ){
-      onChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
-    }
-
-    return false;
-  }
-
-  function mouseup(event){
-
-    if( $.isFunction(onEndChange) ){
-      onEndChange( $.colors( hsl , 'array1Circle2Percentage','HSL') );
-    }
-
-    $(document).unbind('mousemove', mousemove).unbind('mouseup', mouseup)
-    wrapper.data('dragging',false);
-  }
-
 } /// mousedown
 
 
@@ -127,7 +127,7 @@ function refresh() {
       whichCase = self.data('arrayIndex'),
       factor = 100;
 
-    if( whichCase==0 ) factor = 360;
+    if( whichCase===0 ) { factor = 360; }
 
     self.children('span').css({
       left: hsl[ whichCase ]*200/factor
@@ -143,6 +143,8 @@ function refresh() {
     opacityValue = (50-hsl[2])*2/100;
     opacityValuesArray = [0, 1-opacityValue, opacityValue];
   }
+  /// gray is never 100%: otherwise background hue doesnt come through on IE7
+  opacityValuesArray[1] *= 0.8;
 
   scales.filter('.h').children('div').css({
     backgroundColor: $.colors( [ 0, 0, hsl[2] ], 'array1Circle2Percentage','HSL').toString('rgb')
@@ -178,7 +180,7 @@ function setGlobals(thisContainer,options){
       onStartChange:onStartChange,
       onChange:onChange,
       onEndChange:onEndChange
-    }
+    };
 
   }else{
 
@@ -242,7 +244,7 @@ $.fn.hslLiteColorPicker = function(options){
 
   }
 
-}
+};
 
 
 function applyOptions(options){
@@ -289,11 +291,11 @@ function applyOptions(options){
     $.colors.pickers = {};
   }
 
-  var scriptSrc = $('script[src]'); // :last-child fails on chrome?
+  scriptSrc = $('script[src]'); // :last-child fails on chrome?
   if( scriptSrc.length>0 ){
     scriptSrc = scriptSrc.eq( scriptSrc.length -1).attr('src').split('/');
     scriptSrc.pop();
-    scriptSrc = scriptSrc.join('/')+'/'
+    scriptSrc = scriptSrc.join('/')+'/';
   }else{
     scriptSrc = '';
   }
@@ -377,10 +379,10 @@ function initiate(){
 
 
   beforeThis = document.getElementsByTagName('link');
-  if(beforeThis.length==0){
+  if(beforeThis.length===0){
     beforeThis = document.getElementsByTagName('style');
   }
-  if(beforeThis.length!=0){
+  if(beforeThis.length!==0){
     document.getElementsByTagName('head')[0].insertBefore( styleElement, beforeThis[0] );
   }else{
     document.getElementsByTagName('head')[0].appendChild( styleElement);
